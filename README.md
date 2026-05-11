@@ -45,11 +45,15 @@ Project conventions for the AI/team are summarized in `.cursor/rules/feature-sli
 
 ## Demo behavior
 
-- **`/`** — List products from [Fake Store API](https://fakestoreapi.com/), search and filter by category; cards link to a detail page.
-- **`/product/:productId`** — Product detail and add-to-cart (per-product limit enforced in the `add-to-cart` feature config).
-- **`/cart`** — Cart lines, remove line, clear cart. Header shows cart count.
+- **`/`** — Product list with search and category filter; cards link to product detail.
+- **`/product/:productId`** — Detail + add to cart (per-product limit in `features/add-to-cart`).
+- **`/cart`** — Lines, remove, clear; header shows quantity.
 
-**Note:** Catalog and product pages need network access to `fakestoreapi.com`.
+**Data source:** By default the app uses a **bundled mock catalog** in `entities/product/api/mockProducts.ts` (works offline). To use the live HTTP API instead, set in `.env`:
+
+`VITE_USE_FAKESTORE_API=true`
+
+and restart the dev server. That calls [Fake Store API](https://fakestoreapi.com/) (requires network).
 
 ## Optional tooling
 

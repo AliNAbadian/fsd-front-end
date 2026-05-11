@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ProductCard, useProductsQuery } from '@/entities/product'
+import { USE_MOCK_PRODUCT_API } from '@/shared/config'
 import { useCatalogFilters } from '../model/useCatalogFilters'
 
 export function ProductBrowse() {
@@ -27,16 +28,37 @@ export function ProductBrowse() {
           Product catalog
         </h1>
         <p className="text-base text-zinc-600 dark:text-zinc-400">
-          Search by title or description, filter by category. Data from{' '}
-          <a
-            className="font-medium text-violet-600 underline decoration-violet-600/30 underline-offset-2 hover:text-violet-500 dark:text-violet-400 dark:decoration-violet-400/30 dark:hover:text-violet-300"
-            href="https://fakestoreapi.com/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Fake Store API
-          </a>
-          .
+          Search by title or description, filter by category.
+          {USE_MOCK_PRODUCT_API ? (
+            <>
+              {' '}
+              Data is a <strong className="font-medium text-zinc-800 dark:text-zinc-200">local mock</strong>{' '}
+              catalog (no network). Set <code className="rounded bg-zinc-200 px-1.5 py-0.5 text-sm dark:bg-zinc-800">VITE_USE_FAKESTORE_API=true</code> to use the live{' '}
+              <a
+                className="font-medium text-violet-600 underline decoration-violet-600/30 underline-offset-2 hover:text-violet-500 dark:text-violet-400 dark:decoration-violet-400/30 dark:hover:text-violet-300"
+                href="https://fakestoreapi.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Fake Store API
+              </a>
+              .
+            </>
+          ) : (
+            <>
+              {' '}
+              Data from{' '}
+              <a
+                className="font-medium text-violet-600 underline decoration-violet-600/30 underline-offset-2 hover:text-violet-500 dark:text-violet-400 dark:decoration-violet-400/30 dark:hover:text-violet-300"
+                href="https://fakestoreapi.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Fake Store API
+              </a>
+              .
+            </>
+          )}
         </p>
       </header>
 
