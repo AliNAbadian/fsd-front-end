@@ -1,0 +1,6 @@
+export type { Product, ProductRating } from './model/types'
+export { fetchProducts, fetchProductById } from './api/productsApi'
+export { productsQueryKey, useProductsQuery } from './model/useProductsQuery'
+export { productQueryKey, useProductQuery } from './model/useProductQuery'
+export { ProductCard } from './ui/ProductCard'
+export { ProductDetailsView } from './ui/ProductDetailsView'

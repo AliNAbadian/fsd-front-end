@@ -1,0 +1,93 @@
+---
+description: Feature-Sliced Design (FSD) — layers, slices, imports, public API, React data fetching
+alwaysApply: true
+---
+
+# Feature-Sliced Design (this repo)
+
+Follow [FSD v2](https://feature-sliced.design/docs/get-started/overview): code is grouped by **layers** → **slices** (domain) → **segments** (technical role).
+
+## Layer stack (top → bottom)
+
+Only use layers you need. **Do not invent new layer names.** Order (highest to lowest responsibility):
+
+1. `app` — routing, entrypoints, global providers/styles, analytics
+2. `pages` — screens / route-mapped compositions
+3. `widgets` — large reusable UI blocks (multi-entity compositions)
+4. `features` — user-facing product actions reused across pages
+5. `entities` — business nouns (User, Order, …) + their model/ui/api
+6. `shared` — kit, infrastructure, no product meaning
+
+**Deprecated:** `processes` — do not add; use `features` + `app` instead.
+
+## Import rule
+
+A file may import **slices only from layers strictly below** its layer. **Same-layer slices must not import each other.**
+
+**Exceptions:** `app` and `shared` have **no slices** (only segments); files inside those layers may import across segments in that layer.
+
+## Slices & segments
+
+- **Slice** names = business/domain language (`order-checkout`, `user-profile`). Not generic (`utils`, `components`).
+- **Segments** (typical): `ui`, `api`, `model`, `lib`, `config`. Names must describe **purpose**, not shape (`hooks`, `types` as segment roots are discouraged).
+- **Entity cross-refs:** prefer `@x` public APIs (see [public API](https://feature-sliced.design/docs/reference/public-api)).
+
+## Public API
+
+Every slice and every **app/shared segment** exposes a **single entry** (e.g. `index.ts`). **No `export *`.** Export only what others need. External code imports **only** from that public API, never deep paths into internals.
+
+**Same slice:** use **full relative paths** between files (avoid importing slice root `index` from inside the slice — circular risk).
+
+**Cross slice:** use path alias `@/...` (see `tsconfig`), not deep relative paths up to other slices.
+
+**`shared/ui` & `shared/lib`:** prefer **one small public entry per component/library** (e.g. `shared/ui/button/index.ts`) to preserve tree-shaking; avoid one mega-barrel for the whole segment.
+
+## React + data in this project
+
+- **UI** lives in segment `ui` (dumb/presentational components where possible).
+- **Styling:** use **Tailwind CSS** utilities in components. Prefer `shared/ui` primitives styled with Tailwind; avoid ad-hoc global CSS except `src/index.css` (`@import 'tailwindcss'` and rare `@layer base` rules).
+- **TanStack Query:** query/mutation **functions and keys** in `api` (or thin `api` + types in `model`); wire them in **small** custom hooks (e.g. under `model` or next to the feature) — **avoid fat hooks**; split by concern.
+- **Client global state:** use **Zustand** stores (e.g. under `entities/<slice>/model/`) with thin selector hooks exported from the slice public API. No React Context for app-wide client state unless a library requires it.
+- **Auth:** keep **session/token/API** handling separate from login/register **presentation** (`features/auth-*` or `entities/session` for model/api vs `ui` for forms).
+
+## Target folder tree (under `src/`)
+
+```
+src/
+  app/
+    providers/      # app-wide React providers
+    routes/         # router configuration
+    styles/         # global CSS, resets
+    store/          # global store setup (if any)
+    entrypoint/     # bootstrap (optional; may keep root main.tsx during migration)
+  pages/
+    <page-slice>/
+      ui/
+      api/          # page-level requests when not worth a feature
+      model/        # rare; prefer entities/features
+      index.ts      # public API
+  widgets/
+    <widget-slice>/
+      ui/ | api/ | model/ | lib/ | config/
+      index.ts
+  features/
+    <feature-slice>/
+      ui/ | api/ | model/ | lib/ | config/
+      index.ts
+  entities/
+    <entity-slice>/
+      ui/ | api/ | model/ | lib/ | config/
+      @x/           # optional cross-entity public APIs
+      index.ts
+  shared/
+    api/            # HTTP client, shared request helpers
+    ui/             # design system primitives (<slice>/index.ts per primitive)
+    lib/            # focused libraries (date, format, …)
+    config/         # env, flags
+    routes/         # route path constants
+    i18n/           # i18n setup / global messages
+```
+
+## Tooling
+
+Prefer the architectural linter [Steiger](https://github.com/feature-sliced/steiger) when enforcing import boundaries in CI.
