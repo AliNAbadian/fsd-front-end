@@ -1,11 +1,23 @@
+import axios, { isAxiosError } from 'axios'
 import { FAKE_STORE_API_ORIGIN } from '@/shared/config'
 
-export async function requestJson<T>(input: string): Promise<T> {
-  const res = await fetch(input)
-  if (!res.ok) {
-    throw new Error(`Request failed (${res.status})`)
+/** Shared Axios instance (no baseURL — use {@link fakeStorePath} or absolute URLs). */
+export const http = axios.create({
+  headers: { Accept: 'application/json' },
+  timeout: 15_000,
+})
+
+export async function requestJson<T>(url: string): Promise<T> {
+  try {
+    const { data } = await http.get<T>(url)
+    return data
+  } catch (e: unknown) {
+    if (isAxiosError(e)) {
+      const status = e.response?.status
+      throw new Error(status != null ? `Request failed (${status})` : e.message)
+    }
+    throw e
   }
-  return res.json() as Promise<T>
 }
 
 export function fakeStorePath(path: string) {

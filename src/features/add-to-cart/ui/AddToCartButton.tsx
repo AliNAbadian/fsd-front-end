@@ -8,12 +8,15 @@ type AddToCartButtonProps = {
 }
 
 export function AddToCartButton({ product, className = '' }: AddToCartButtonProps) {
-  const { addOne, canAdd, quantityInCart, maxPerProduct } = useAddToCartProduct(product)
+  const { addOne, canAdd, isAvailable, quantityInCart, maxPerProduct } =
+    useAddToCartProduct(product)
+
+  const label = !isAvailable ? 'Unavailable' : canAdd ? 'Add to cart' : 'Max in cart'
 
   return (
     <div className={['flex flex-wrap items-center gap-3', className].filter(Boolean).join(' ')}>
       <Button disabled={!canAdd} onClick={addOne}>
-        {canAdd ? 'Add to cart' : 'Max in cart'}
+        {label}
       </Button>
       <span className="text-sm text-zinc-500 dark:text-zinc-400">
         In cart: {quantityInCart}/{maxPerProduct}

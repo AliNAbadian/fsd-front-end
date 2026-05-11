@@ -11,4 +11,9 @@ export type Product = {
   category: string
   image: string
   rating: ProductRating
+  /**
+   * When the backend sends stock/availability, set this explicitly.
+   * If omitted, {@link isProductAvailable} uses catalog-field heuristics.
+   */
+  inStock?: boolean
 }

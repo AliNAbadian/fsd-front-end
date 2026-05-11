@@ -1,4 +1,5 @@
 export type { Product, ProductRating } from './model/types'
+export { isProductAvailable } from './model/isProductAvailable'
 export { fetchProducts, fetchProductById } from './api/productsApi'
 export { productsQueryKey, useProductsQuery } from './model/useProductsQuery'
 export { productQueryKey, useProductQuery } from './model/useProductQuery'

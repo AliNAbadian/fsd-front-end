@@ -8,6 +8,7 @@ Sample [Feature-Sliced Design](https://feature-sliced.design/) application: a sm
 - Tailwind CSS v4 (`@tailwindcss/vite`)
 - React Router
 - TanStack Query (server state)
+- Axios (HTTP)
 - Zustand (client global state — cart)
 - ESLint + typescript-eslint
 
@@ -36,7 +37,7 @@ Source lives under `src/` with path alias **`@/`** → `src/` (see `tsconfig.app
 | `widgets` | Composed blocks (`site-header`, `product-details`) |
 | `features` | User flows (`product-browse`, `add-to-cart`, …) |
 | `entities` | Business slices (`product`, `cart`) |
-| `shared`  | API client, config, UI primitives |
+| `shared`  | HTTP client (Axios), config, UI primitives |
 
 Slices expose a **public API** through their root `index.ts` (explicit exports; no `export *`). Cross-entity types for the cart use **`entities/product/@x/cart.ts`** as in the [FSD public API docs](https://feature-sliced.design/docs/reference/public-api).
 

@@ -1,1 +1,1 @@
-export { fakeStorePath, requestJson } from './client'
+export { fakeStorePath, http, requestJson } from './client'

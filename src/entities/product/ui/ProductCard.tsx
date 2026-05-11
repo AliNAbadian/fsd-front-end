@@ -1,4 +1,5 @@
 import type { Product } from '../model/types'
+import { isProductAvailable } from '../model/isProductAvailable'
 
 type ProductCardProps = {
   product: Product
@@ -14,10 +15,25 @@ function formatPrice(value: number) {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { title, image, category, price, rating } = product
+  const available = isProductAvailable(product)
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white text-left shadow-md transition-[box-shadow,border-color] hover:border-violet-400/50 hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-      <div className="flex aspect-square items-center justify-center bg-zinc-100 p-4 dark:bg-zinc-800/80">
+    <article
+      aria-disabled={!available}
+      className={[
+        'group flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white text-left shadow-md transition-[box-shadow,border-color]',
+        available
+          ? 'hover:border-violet-400/50 hover:shadow-lg'
+          : 'opacity-75 saturate-[0.85]',
+        'dark:border-zinc-800 dark:bg-zinc-900',
+      ].join(' ')}
+    >
+      <div className="relative flex aspect-square items-center justify-center bg-zinc-100 p-4 dark:bg-zinc-800/80">
+        {!available ? (
+          <span className="absolute left-2 top-2 rounded-md bg-zinc-900/80 px-2 py-0.5 text-xs font-medium text-white dark:bg-zinc-950/90">
+            Unavailable
+          </span>
+        ) : null}
         <img
           className="max-h-[72%] max-w-[72%] object-contain mix-blend-multiply dark:mix-blend-normal dark:brightness-105"
           src={image}
